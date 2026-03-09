@@ -6,6 +6,11 @@
   --color-menu: #0094a5;
 }
 
+/* 隐藏 Leva 调试面板 */
+#leva__root {
+  display: none !important;
+}
+
 @utility font-body {
   font-family: 'Pompiere', sans-serif;
   font-weight: 400;
