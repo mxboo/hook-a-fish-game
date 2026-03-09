@@ -52,11 +52,12 @@ export default function Fish2({
 
   return (
     <group {...props} dispose={null}>
-      {/* 缩小 0.5 倍，使用原始方向 */}
+      {/* 缩小 0.5 倍，旋转使嘴部向上 */}
       <mesh 
         geometry={nodes['tripo_node_a763bd53-000e-494e-8d1b-57e6db21b8b4'].geometry} 
         material={material}
         castShadow
+        rotation={[0, 0, -Math.PI / 2]}
         scale={0.5}
       />
     </group>
