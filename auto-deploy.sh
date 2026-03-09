@@ -36,9 +36,15 @@ echo ""
 
 # 步骤 1: 创建项目目录并克隆代码
 echo -e "${YELLOW}[1/6] 克隆代码...${NC}"
+
+# 彻底清空并重建目录
+if [ -d "$PROJECT_DIR" ]; then
+  rm -rf "$PROJECT_DIR"
+fi
 mkdir -p $PROJECT_DIR
 cd $PROJECT_DIR
-rm -rf * 2>/dev/null || true
+
+# 克隆代码
 git clone $GITHUB_REPO .
 echo -e "${GREEN}✓ 代码克隆完成${NC}"
 
