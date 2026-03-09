@@ -44,6 +44,8 @@ export default function Fish({
   const [materialC, setMaterialC] = useState<Material>()
 
   useEffect(() => {
+    if (!materials?.Color) return
+    
     const baseMaterial = materials.Color.clone()
     baseMaterial.map = null
     baseMaterial.metalness = 0.5
@@ -62,13 +64,18 @@ export default function Fish({
     setMaterialC(materialC)
   }, [materials, colorA, colorB, colorC])
 
+  // 模型加载完成前不渲染
+  if (!nodes || !materials) {
+    return null
+  }
+
   return (
     <group {...props} dispose={null}>
       <group rotation={[-Math.PI / 2, 0, 0]} scale={0.001}>
         <group rotation={[Math.PI / 2, 0, 0]}>
           <mesh
             castShadow
-            geometry={nodes.Sphere_Color_0.geometry}
+            geometry={nodes.Sphere_Color_0?.geometry}
             material={materialA}
             position={[0, 231.474, 6.24]}
             rotation={[-Math.PI / 2, 0, 0]}
@@ -76,21 +83,21 @@ export default function Fish({
           />
           <mesh
             castShadow
-            geometry={nodes.Tail_Color_0.geometry}
+            geometry={nodes.Tail_Color_0?.geometry}
             material={materialB}
             position={[0, 238.314, -111.059]}
             rotation={[-Math.PI / 2, 1.571, 0]}
             scale={100}
           />
           <mesh
-            geometry={nodes.Sphere002_Color_0.geometry}
+            geometry={nodes.Sphere002_Color_0?.geometry}
             material={materialC}
             position={[0, 231.474, 6.24]}
             rotation={[-0.478, -0.674, 1.824]}
             scale={140.754}
           />
           <mesh
-            geometry={nodes.Iris_Color_0.geometry}
+            geometry={nodes.Iris_Color_0?.geometry}
             material={materials.Color}
             position={[0, 240.885, 158.506]}
             rotation={[-1.679, 0, 0]}
