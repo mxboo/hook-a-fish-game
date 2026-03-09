@@ -1,4 +1,4 @@
-import { GradientTexture, GradientType, MeshDistortMaterial } from '@react-three/drei'
+import { GradientTexture, GradientType, MeshDistortMaterial, Sparkles } from '@react-three/drei'
 import { useThree } from '@react-three/fiber'
 import { CuboidCollider, TrimeshCollider } from '@react-three/rapier'
 import { useState } from 'react'
@@ -28,6 +28,7 @@ export default function Water() {
 
   return (
     <>
+      {/* 水面 */}
       <mesh
         position-y={0.01}
         rotation-x={-Math.PI * 0.5}
@@ -47,6 +48,20 @@ export default function Water() {
           />
         </MeshDistortMaterial>
       </mesh>
+
+      {/* 水面边缘浮沫效果 */}
+      <Sparkles
+        position={[0, 0.05, 0]}
+        size={radius * 1.2}
+        scale={[radius * 2.5, 0.1, radius * 2.5]}
+        speed={0.3}
+        count={200}
+        color="white"
+        opacity={0.6}
+        sizeMultiplier={0.02}
+        minSpeed={0.1}
+        maxSpeed={0.5}
+      />
 
       <mesh scale={radius} position={-0.1} rotation-x={Math.PI * 0.5}>
         <sphereGeometry args={[1, 32, 16, 0, Math.PI]} />
