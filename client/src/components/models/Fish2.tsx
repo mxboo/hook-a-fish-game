@@ -26,25 +26,12 @@ type Fish2Props = JSX.IntrinsicElements['group'] & {
 }
 
 export default function Fish2({
-  colorA = '#ff6b6b',
-  colorB = '#ffd93d',
-  colorC = '#6bcb77',
+  colorA,
+  colorB,
+  colorC,
   ...props
 }: Fish2Props) {
   const { nodes, materials } = useGLTF('/models/fish2.glb') as GLTFResult
-  const [material, setMaterial] = useState<Material>()
-
-  useEffect(() => {
-    if (!materials['tripo_mat_a763bd53-000e-494e-8d1b-57e6db21b8b4']) return
-    
-    const baseMaterial = materials['tripo_mat_a763bd53-000e-494e-8d1b-57e6db21b8b4'].clone()
-    baseMaterial.map = null
-    baseMaterial.metalness = 0.5
-    baseMaterial.roughness = 0.8
-    baseMaterial.color.set(colorA)
-    
-    setMaterial(baseMaterial)
-  }, [materials, colorA, colorB, colorC])
 
   if (!nodes || !materials) {
     return null
@@ -52,10 +39,10 @@ export default function Fish2({
 
   return (
     <group {...props} dispose={null}>
-      {/* 缩小 0.5 倍，旋转使嘴部向上 */}
+      {/* 缩小 0.5 倍，旋转使嘴部向上，使用原始默认材质 */}
       <mesh 
         geometry={nodes['tripo_node_a763bd53-000e-494e-8d1b-57e6db21b8b4'].geometry} 
-        material={material}
+        material={materials['tripo_mat_a763bd53-000e-494e-8d1b-57e6db21b8b4']}
         castShadow
         rotation={[Math.PI / 2, 0, Math.PI / 2]}
         scale={0.5}
