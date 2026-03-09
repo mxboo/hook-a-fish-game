@@ -34,8 +34,8 @@ export default function Grass() {
     [radius],
   )
 
-  // 生成 150 棵树，营造茂密森林感觉
-  const treeCount = 150
+  // 生成 100 棵树，营造森林感觉
+  const treeCount = 100
   const treeInstances: TreeInstanceProps[] = useMemo(
     () =>
       Array.from({ length: treeCount }).map(() => {
