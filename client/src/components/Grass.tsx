@@ -13,7 +13,7 @@ import Tools from './Tools'
 export default function Grass() {
   const radius = useGame(state => state.radius)
 
-  const grassInstancesCount = 500
+  const grassInstancesCount = 1000
   const grassInstances: GrassInstanceProps[] = useMemo(
     () =>
       Array.from({ length: grassInstancesCount }).map(() => {
