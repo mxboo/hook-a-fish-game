@@ -19,7 +19,7 @@ interface TreeInstanceProps {
 export default function Grass() {
   const radius = useGame(state => state.radius)
 
-  const grassInstancesCount = 1000
+  const grassInstancesCount = 2000
   const grassInstances: GrassInstanceProps[] = useMemo(
     () =>
       Array.from({ length: grassInstancesCount }).map(() => {
@@ -34,8 +34,8 @@ export default function Grass() {
     [radius],
   )
 
-  // 生成 50 棵树，营造森林感觉
-  const treeCount = 50
+  // 生成 150 棵树，营造茂密森林感觉
+  const treeCount = 150
   const treeInstances: TreeInstanceProps[] = useMemo(
     () =>
       Array.from({ length: treeCount }).map(() => {
