@@ -82,9 +82,9 @@ const MainMenu = animated(props => {
   return (
     <div {...props} className="menu-section">
       <h1 className="font-title flex flex-col items-center gap-0 relative">
-        <span className="text-7xl leading-8">钓鱼</span>
-        <span className="text-2xl">-A-</span>
-        <span className="text-7xl">去！</span>
+        <span className="text-7xl leading-8">绝不</span>
+        <span className="text-2xl">-</span>
+        <span className="text-7xl">空军</span>
         <animated.div
           style={logoSpring}
           className="absolute size-100 -top-[191px] -left-22 rotate-15"
