@@ -60,6 +60,9 @@ export default defineConfig({
   server: {
     host: true,
     open: true,
+    hmr: {
+      overlay: false, // 禁用开发服务器错误覆盖层
+    },
   },
   build: {
     emptyOutDir: true, // Empty the folder first
