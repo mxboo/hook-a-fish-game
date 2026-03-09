@@ -10,6 +10,12 @@ import InstancedGrass from './models/InstancedGrass'
 import Tree from './models/Tree'
 import Tools from './Tools'
 
+interface TreeInstanceProps {
+  position: Vector3
+  rotation: Euler
+  scale: number
+}
+
 export default function Grass() {
   const radius = useGame(state => state.radius)
 
@@ -22,6 +28,22 @@ export default function Grass() {
         const position = new Vector3(r * Math.cos(angle), 0.17, r * Math.sin(angle))
         const rotation = new Euler(0, randomAngle(), 0)
         const scale = random(0.001, 0.002)
+
+        return { position, rotation, scale }
+      }),
+    [radius],
+  )
+
+  // 生成 50 棵树，营造森林感觉
+  const treeCount = 50
+  const treeInstances: TreeInstanceProps[] = useMemo(
+    () =>
+      Array.from({ length: treeCount }).map(() => {
+        const r = random(radius + 2, radius + 6)
+        const angle = randomAngle()
+        const position = new Vector3(r * Math.cos(angle), 0, r * Math.sin(angle))
+        const rotation = new Euler(0, randomAngle(), 0)
+        const scale = random(0.35, 0.55)
 
         return { position, rotation, scale }
       }),
@@ -54,9 +76,15 @@ export default function Grass() {
 
       <InstancedGrass count={grassInstancesCount} instances={grassInstances} />
 
-      <Tree scale={0.45} position={[1.5, 0, -4.5]} rotation-y={-Math.PI * 0.15} />
-      <Tree scale={0.5} position={[3, 0, -5]} rotation-y={-Math.PI * 0.2} />
-      <Tree scale={0.48} position={[3.5, 0, -3.5]} rotation-y={-Math.PI * 0.25} />
+      {/* 渲染森林 */}
+      {treeInstances.map((tree, index) => (
+        <Tree
+          key={`tree-${index}`}
+          scale={tree.scale}
+          position={tree.position}
+          rotation-y={tree.rotation.y}
+        />
+      ))}
 
       <Bucket />
       <Tools />
