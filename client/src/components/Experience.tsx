@@ -1,6 +1,6 @@
 import { CameraControls } from '@react-three/drei'
 import { Physics } from '@react-three/rapier'
-import { EffectComposer, SSR } from '@react-three/postprocessing'
+import { EffectComposer, ScreenSpaceReflections } from '@react-three/postprocessing'
 import { useDebug } from '../hooks/use-debug'
 import { useIsTouch } from '../hooks/use-is-touch'
 import Environment from './Environment'
@@ -53,14 +53,13 @@ export default function Experience() {
 
         {/* 水面 SSR 反射效果 */}
         <EffectComposer disableNormalPass>
-          <SSR
+          <ScreenSpaceReflections
             intensity={0.8}
-            reflectivity={0.5}
+            resolution={256}
+            maxDepth={20}
+            maxDistance={20}
             roughness={0.3}
             blur={1}
-            resolution={0.5}
-            maxDepth={20}
-            thickness={10}
           />
         </EffectComposer>
       </Canvas>
