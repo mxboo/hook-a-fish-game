@@ -39,8 +39,8 @@ export default function Menu() {
         switch (item) {
               case 'main': return <MainMenu style={style} />
               case 'tutorial': return <Tutorial style={style} />
-              case 'credits': return <Credits style={style} /> 
-              case 'game-over': return <End style={style} /> 
+              case 'credits': return <Credits style={style} />
+              case 'game-over': return <End style={style} />
             }
       })}
     </Html>
@@ -65,9 +65,9 @@ const MainMenu = animated(props => {
   return (
     <div {...props} className="menu-section">
       <h1 className="font-title flex flex-col items-center gap-0 relative">
-        <span className="text-7xl leading-8">Hook</span>
+        <span className="text-7xl leading-8">钓鱼</span>
         <span className="text-2xl">-A-</span>
-        <span className="text-7xl">Fish!</span>
+        <span className="text-7xl">去！</span>
         <animated.div
           style={logoSpring}
           className="absolute size-100 -top-[191px] -left-22 rotate-15"
@@ -77,15 +77,15 @@ const MainMenu = animated(props => {
       </h1>
       <animated.button onClick={start} style={buttonStartSpring}>
         <span className="icon-[solar--play-bold]" />
-        <span>Start</span>
+        <span>开始游戏</span>
       </animated.button>
       <animated.button onClick={() => setMenu('tutorial')} style={buttonTutorialSpring}>
         <span className="icon-[solar--question-circle-bold]" />
-        <span>How to Play</span>
+        <span>游戏玩法</span>
       </animated.button>
       <animated.button onClick={() => setMenu('credits')} style={buttonCreditsSpring}>
         <span className="icon-[solar--info-circle-bold]" />
-        <span>Credits</span>
+        <span>制作人员</span>
       </animated.button>
 
       <footer className="absolute bottom-10 flex flex-col items-center gap-2">
@@ -117,23 +117,23 @@ const Tutorial = animated(props => {
     <div {...props} className="menu-section text-2xl md:text-3xl text-center px-5 gap-2">
       <span className="icon-[mdi--hook] text-4xl md:text-5xl" />
       <p className="mb-5 md:mb-10">
-        Control the fishing rod{' '}
-        <span className="font-extrabold"> with your {isTouch ? 'finger' : 'mouse'}</span>,
+        用你的{' '}
+        <span className="font-extrabold">{isTouch ? '手指' : '鼠标'}</span> 控制鱼竿，
         <br className="max-md:hidden" />
-        aim for the fish’s mouth and catch them as they jump
+        瞄准鱼嘴，在它们跳跃时钓起它们
       </p>
       <span className="icon-[mdi--bucket] text-4xl md:text-5xl" />
       <p className="mb-5 md:mb-10">
-        After you <span className="font-extrabold">Hook-A-Fish</span>, <br />
-        put it inside your bucket
+        <span className="font-extrabold">钓到鱼后</span>，<br />
+        把鱼放进你的桶里
       </p>
       <span className="icon-[solar--clock-circle-bold] text-4xl md:text-5xl" />
       <p className="mb-5 md:mb-10">
-        Catch them as fast as you can! <br />
-        Each fish gives you a <span className="font-extrabold">time bonus</span>
+        尽可能快地钓到它们！<br />
+        每条鱼都会给你<span className="font-extrabold">额外时间奖励</span>
       </p>
       <animated.button style={buttonBackSpring} onClick={() => setMenu('main')} className="sm">
-        <span className="icon-[solar--alt-arrow-left-linear]" /> <span>Back</span>
+        <span className="icon-[solar--alt-arrow-left-linear]" /> <span>返回</span>
       </animated.button>
       {/* <p className="text-2xl mt-5 animate-pulse uppercase font-extrabold">
         Power-ups are coming soon!
@@ -194,7 +194,7 @@ const Credits = animated(props => {
         className="max-md:absolute max-md:bottom-10 sm"
         onClick={() => setMenu('main')}
       >
-        <span className="icon-[solar--alt-arrow-left-linear]" /> <span>Back</span>
+        <span className="icon-[solar--alt-arrow-left-linear]" /> <span>返回</span>
       </animated.button>
     </div>
   )
@@ -219,8 +219,8 @@ const End = animated(props => {
       files: [file],
       text: `${winMessage}
       
-I just caught ${lastScore} fish in Hook-A-Fish!
-Can you beat my score?
+我刚刚在钓鱼去游戏中钓到了 ${lastScore} 条鱼！
+你能打破我的记录吗？
 
 🎣 https://hook-a-fish.dammafra.dev
 
@@ -248,10 +248,10 @@ Can you beat my score?
 
   return (
     <div {...props} className="menu-section">
-      <p className="font-title text-6xl">Game Over</p>
+      <p className="font-title text-6xl">游戏结束</p>
       {win ? (
         <>
-          <p className="text-4xl uppercase -mt-4">{lastScore} Fish Caught</p>
+          <p className="text-4xl uppercase -mt-4">钓到 {lastScore} 条鱼</p>
           <animated.div className="relative" style={imgSprings}>
             <img
               src={lastPhoto}
@@ -269,13 +269,13 @@ Can you beat my score?
       <div className="flex max-md:flex-col gap-4 mt-4">
         <animated.button style={buttonBackSpring} onClick={start} className="backdrop-blur-sm">
           <span className="icon-[stash--arrow-retry] -scale-x-100" />
-          <span>Retry</span>
+          <span>再来一次</span>
         </animated.button>
 
         {win && (
           <animated.button style={buttonShareSpring} onClick={share} className="backdrop-blur-sm">
             <span className="icon-[solar--share-bold]" />
-            <span>Share</span>
+            <span>分享</span>
           </animated.button>
         )}
       </div>
