@@ -1,10 +1,14 @@
 import { animated, useSpring, useTransition, type UseSpringProps } from '@react-spring/web'
 import { Html } from '@react-three/drei'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useIsTouch } from '../../hooks/use-is-touch'
 import useGame from '../../stores/use-game'
+import useAuth from '../../stores/use-auth'
+import api from '../../api/client'
 import { randomInt, randomOneOf } from '../../utils/random'
 import { LOST_MESSAGES, WIN_MESSAGES } from '../data/messages'
+import AuthModal from './AuthModal'
+import GameLeaderboard from './GameLeaderboard'
 
 const getButtonSpringConfig = () =>
   ({
@@ -39,7 +43,6 @@ export default function Menu() {
         switch (item) {
               case 'main': return <MainMenu style={style} />
               case 'tutorial': return <Tutorial style={style} />
-              case 'credits': return <Credits style={style} />
               case 'game-over': return <End style={style} />
             }
       })}
@@ -50,6 +53,8 @@ export default function Menu() {
 const MainMenu = animated(props => {
   const start = useGame(state => state.start)
   const setMenu = useGame(state => state.setMenu)
+  const auth = useAuth()
+  const [showAuth, setShowAuth] = useState(false)
 
   const logoSpring = useSpring({
     from: { rotate: -5 },
@@ -60,7 +65,19 @@ const MainMenu = animated(props => {
 
   const buttonStartSpring = useSpring(getButtonSpringConfig())
   const buttonTutorialSpring = useSpring(getButtonSpringConfig())
-  const buttonCreditsSpring = useSpring(getButtonSpringConfig())
+
+  const handleAuthSuccess = () => {
+    setShowAuth(false)
+    auth.checkAuth()
+  }
+
+  const handleStart = () => {
+    if (!auth.isAuthenticated) {
+      setShowAuth(true)
+      return
+    }
+    start()
+  }
 
   return (
     <div {...props} className="menu-section">
@@ -75,34 +92,54 @@ const MainMenu = animated(props => {
           <span className="absolute left-14 top-33 icon-[mdi--hook] text-[250px] text-white/20" />
         </animated.div>
       </h1>
-      <animated.button onClick={start} style={buttonStartSpring}>
-        <span className="icon-[solar--play-bold]" />
-        <span>开始游戏</span>
-      </animated.button>
-      <animated.button onClick={() => setMenu('tutorial')} style={buttonTutorialSpring}>
-        <span className="icon-[solar--question-circle-bold]" />
-        <span>游戏玩法</span>
-      </animated.button>
-      <animated.button onClick={() => setMenu('credits')} style={buttonCreditsSpring}>
-        <span className="icon-[solar--info-circle-bold]" />
-        <span>制作人员</span>
-      </animated.button>
-
-      <footer className="absolute bottom-10 flex flex-col items-center gap-2">
-        <p className="inline-flex items-center gap-1 text-2xl">
-          Made with <span className="icon-[solar--heart-angle-bold]" /> by{' '}
-          <a href="https://github.com/dammafra/hook-a-fish" target="_blank">
-            @dammafra
-          </a>
-        </p>
-        <a href="https://www.buymeacoffee.com/dammafra" target="_blank">
-          <img
-            src="./bmc.png"
-            alt="Buy Me A Coffee"
-            className="h-10 hover:opacity-80 active:opacity-80"
-          />
-        </a>
-      </footer>
+      
+      {auth.isAuthenticated && auth.user && (
+        <div className="mb-4 text-center">
+          <div className="text-sm text-cyan-400">欢迎，{auth.user.username}!</div>
+        </div>
+      )}
+      
+      {/* 未登录时只显示登录按钮 */}
+      {!auth.isAuthenticated && (
+        <>
+          <div className="mb-4 text-center text-yellow-400 text-sm">
+            ⚠️ 请先登录后开始游戏
+          </div>
+          <animated.button 
+            onClick={() => setShowAuth(true)} 
+            style={buttonStartSpring}
+          >
+            <span className="icon-[solar--login-bold]" />
+            <span>登录/注册</span>
+          </animated.button>
+        </>
+      )}
+      
+      {/* 登录后显示开始游戏和登出按钮，隐藏玩法按钮 */}
+      {auth.isAuthenticated && (
+        <>
+          <animated.button onClick={handleStart} style={buttonStartSpring}>
+            <span className="icon-[solar--play-bold]" />
+            <span>开始游戏</span>
+          </animated.button>
+          
+          <animated.button 
+            onClick={() => auth.logout()} 
+            style={buttonTutorialSpring}
+            className="backdrop-blur-sm"
+          >
+            <span className="icon-[solar--logout-bold]" />
+            <span>登出</span>
+          </animated.button>
+        </>
+      )}
+      
+      {showAuth && (
+        <AuthModal 
+          onClose={() => setShowAuth(false)} 
+          onAuthSuccess={handleAuthSuccess} 
+        />
+      )}
     </div>
   )
 })
@@ -144,70 +181,39 @@ const Tutorial = animated(props => {
   )
 })
 
-const Credits = animated(props => {
-  const setMenu = useGame(state => state.setMenu)
-
-  const buttonBackSpring = useSpring(getButtonSpringConfig())
-
-  return (
-    <div
-      {...props}
-      className="menu-section text-xs sm:text-sm md:text-lg tracking-wide text-center"
-    >
-      <div>
-        <h2 className="font-title">Models</h2>
-        {/* prettier-ignore */}
-        <ul>
-          <li><a href="https://poly.pizza/m/eyuCxAqI9er" target="_blank" className='uppercase'>Fishing Pole</a> by <span className="uppercase">Shawn Westphal</span> [<a href="https://creativecommons.org/licenses/by/3.0/" target="_blank">CC-BY</a>] via Poly Pizza</li>
-          <li><a href="https://poly.pizza/m/3xxRFD2brcq" target="_blank" className='uppercase'>Fish hook</a> by <span className="uppercase">Poly by Google</span> [<a href="https://creativecommons.org/licenses/by/3.0/" target="_blank">CC-BY</a>] via Poly Pizza</li>
-          <li><a href="https://poly.pizza/m/3tyh15Fbmsx" target="_blank" className='uppercase'>Tuft of grass</a> by <span className="uppercase">Poly by Google</span> [<a href="https://creativecommons.org/licenses/by/3.0/" target="_blank">CC-BY</a>] via Poly Pizza</li>
-          <li><a href="https://poly.pizza/m/i4QMw4L64D" target="_blank" className='uppercase'>Tree</a> by <span className="uppercase">Quaternius</span></li>
-          <li><a href="https://poly.pizza/m/83obI9bNun" target="_blank"className='uppercase'>Bucket</a> by <span className="uppercase">Quaternius</span></li>
-          <li><a href="https://poly.pizza/m/Li1cr0atPF" target="_blank"className='uppercase'>Fishing Stand</a> by <span className="uppercase">Kenney</span></li>
-          <li><a href="https://skfb.ly/6WVNM" target="_blank"className='uppercase'>Fish</a> by <span className="uppercase">Zainal Abd. Kahar</span> <a href="http://creativecommons.org/licenses/by/4.0/" target="_blank">[CC-BY]</a></li>
-        </ul>
-      </div>
-      <div>
-        <h2 className="font-title">Sound Effects</h2>
-        {/* prettier-ignore */}
-        <ul>
-          <li><a href="https://pixabay.com/users/audiopapkin-14728698/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=302355" target="_blank" className="uppercase">Fishing Reel</a> by <span className="uppercase">Pawel Spychala</span> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=302355" target="_blank">Pixabay</a></li>
-          <li><a href="https://pixabay.com/users/u_vlcuq4wxwj-34182338/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=142159" target="_blank" className="uppercase">Your Plastic Bucket is Full of Water</a> by <span className="uppercase">u_vlcuq4wxwj</span> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=142159" target="_blank">Pixabay</a></li>
-          <li><a href="https://pixabay.com/users/freesound_community-46691455/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=6114" target="_blank" className="uppercase">Fish in River</a> by <span className="uppercase">freesound_community</span> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=6114" target="_blank">Pixabay</a></li>
-          <li><a href="https://pixabay.com/users/sergequadrado-24990007/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=109009" target="_blank" className="uppercase">Positive Cartoon Loop</a> Music by <span className="uppercase">Sergei Chetvertnykh</span> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=109009" target="_blank">Pixabay</a></li>
-          <li><a href="https://pixabay.com/users/alexis_gaming_cam-50011695/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=367087" target="_blank" className="uppercase">Item Collected</a> by <span className="uppercase">ALEXIS_GAMING_CAM</span> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=367087" target="_blank">Pixabay</a></li>
-          <li><a href="https://pixabay.com/users/freesound_community-46691455/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=6462" target="_blank" className="uppercase">Jump</a> by <span className="uppercase">freesound_community</span> from <a href="https://pixabay.com/sound-effects//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=6462" target="_blank">Pixabay</a></li>
-          <li><a href="https://pixabay.com/users/freesound_community-46691455/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=6320" target="_blank" className="uppercase">Referee whistle blow, gymnasium</a> by <span className="uppercase">freesound_community</span> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=6320" target="_blank">Pixabay</a></li>
-          <li><a href="https://pixabay.com/users/reddog0607-51038821/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=365218" target="_blank" className="uppercase">Clock Ticking</a> by <span className="uppercase">RedDog0607</span> from <a href="https://pixabay.com/sound-effects//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=365218" target="_blank">Pixabay</a></li>
-      </ul>
-      </div>
-      <div>
-        <h2 className="font-title">Others</h2>
-        {/* prettier-ignore */}
-        <ul>
-          <li><a href="https://codepen.io/matchboxhero/pen/LzdgOv" target="_blank" className="uppercase">Animated SVG Bubbles</a> by <span className="uppercase">Steven Roberts</span> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=302355" target="_blank">CodePen</a></li>
-          <li><a href="https://kenney.nl/assets/cursor-pack" target="_blank" className="uppercase">Cursor Pack</a> by <span className="uppercase">Kenney</span></li>
-        </ul>
-      </div>
-      <animated.button
-        style={buttonBackSpring}
-        className="max-md:absolute max-md:bottom-10 sm"
-        onClick={() => setMenu('main')}
-      >
-        <span className="icon-[solar--alt-arrow-left-linear]" /> <span>返回</span>
-      </animated.button>
-    </div>
-  )
-})
-
 const End = animated(props => {
   const start = useGame(state => state.start)
   const lastScore = useGame(state => state.lastScore)
   const lastPhoto = useGame(state => state.lastPhoto)
+  const auth = useAuth()
 
   const win = useMemo(() => !!lastScore, [lastScore])
   const winMessage = useMemo(() => randomOneOf(WIN_MESSAGES), [])
   const lostMessage = useMemo(() => randomOneOf(LOST_MESSAGES), [])
+  const [scoreSubmitted, setScoreSubmitted] = useState(false)
+
+  const submitScore = async () => {
+    if (!auth.isAuthenticated || !lastScore) return
+    
+    const duration = 60
+    try {
+      const result = await api.submitScore(lastScore, lastScore, duration)
+      if (result.success) {
+        setScoreSubmitted(true)
+        console.log('分数已提交:', result.data)
+      }
+    } catch (error) {
+      console.error('分数提交失败:', error)
+    }
+  }
+
+  // 使用 useEffect 来执行副作用
+  useEffect(() => {
+    if (win && auth.isAuthenticated && !scoreSubmitted && lastScore) {
+      submitScore()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [win, auth.isAuthenticated, scoreSubmitted, lastScore])
 
   const share = async () => {
     const filename = `${Date.now()}_hook-a-fish_${lastScore}.png`
@@ -252,6 +258,17 @@ const End = animated(props => {
       {win ? (
         <>
           <p className="text-4xl uppercase -mt-4">钓到 {lastScore} 条鱼</p>
+          
+          {auth.isAuthenticated && (
+            <div className="text-center mt-2">
+              {scoreSubmitted ? (
+                <p className="text-green-400 text-sm">✅ 分数已保存到排行榜</p>
+              ) : (
+                <p className="text-yellow-400 text-sm">⏳ 正在提交分数...</p>
+              )}
+            </div>
+          )}
+          
           <animated.div className="relative" style={imgSprings}>
             <img
               src={lastPhoto}
@@ -279,6 +296,12 @@ const End = animated(props => {
           </animated.button>
         )}
       </div>
+      
+      {win && !auth.isAuthenticated && (
+        <div className="mt-4 text-center text-sm text-gray-400">
+          登录以保存分数并参与排行榜竞争
+        </div>
+      )}
     </div>
   )
 })

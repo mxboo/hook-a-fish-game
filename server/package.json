@@ -17,8 +17,14 @@
     "@colyseus/monitor": "^0.16.7",
     "@colyseus/playground": "^0.16.4",
     "@colyseus/tools": "^0.16.13",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "bcryptjs": "^3.0.3",
     "colyseus": "^0.16.4",
+    "cors": "^2.8.6",
     "express": "^5.1.0",
-    "express-basic-auth": "^1.2.1"
+    "express-basic-auth": "^1.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mysql2": "^3.19.1"
   }
 }
