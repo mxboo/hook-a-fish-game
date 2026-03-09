@@ -57,7 +57,7 @@ export default function Fish2({
         geometry={nodes['tripo_node_a763bd53-000e-494e-8d1b-57e6db21b8b4'].geometry} 
         material={material}
         castShadow
-        rotation={[0, 0, -Math.PI / 2]}
+        rotation={[Math.PI / 2, 0, Math.PI / 2]}
         scale={0.5}
       />
     </group>
