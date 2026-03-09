@@ -1,5 +1,6 @@
 import { CameraControls } from '@react-three/drei'
 import { Physics } from '@react-three/rapier'
+import { EffectComposer, SSR } from '@react-three/postprocessing'
 import { useDebug } from '../hooks/use-debug'
 import { useIsTouch } from '../hooks/use-is-touch'
 import Environment from './Environment'
@@ -49,6 +50,19 @@ export default function Experience() {
 
         <SoundBooard />
         <CameraRig />
+
+        {/* 水面 SSR 反射效果 */}
+        <EffectComposer disableNormalPass>
+          <SSR
+            intensity={0.8}
+            reflectivity={0.5}
+            roughness={0.3}
+            blur={1}
+            resolution={0.5}
+            maxDepth={20}
+            thickness={10}
+          />
+        </EffectComposer>
       </Canvas>
     </>
   )
