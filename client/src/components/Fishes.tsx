@@ -7,11 +7,12 @@ import {
   type CollisionEnterPayload,
   type RigidBodyTypeString,
 } from '@react-three/rapier'
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useRef, useState, useCallback } from 'react'
 import { Euler, Quaternion, Vector3 } from 'three'
 import useGame from '../stores/use-game'
 import { random, randomAngle, randomColor } from '../utils/random'
 import FishModel from './models/Fish2'
+import Ripple from './Ripple'
 
 interface FishProps {
   id: string
@@ -50,10 +51,13 @@ export function Fish({ id }: FishProps) {
 
   const floatFrequency = useMemo(() => random(1, 3), [])
   const lastFloat = useRef(0)
+  const lastRippleTime = useRef(0)
 
   const body = useRef<RapierRigidBody>(null!)
   const [bodyType, setBodyType] = useState<RigidBodyTypeString>('kinematicPosition')
   const [hookBody, setHookBody] = useState<RapierRigidBody>()
+  const [showRipple, setShowRipple] = useState(false)
+  const [ripplePosition, setRipplePosition] = useState<Vector3>(new Vector3())
 
   const onCollisionEnter = ({ other }: CollisionEnterPayload) => {
     // @ts-expect-error `userData` is of type `Record<string, any>`
@@ -66,16 +70,24 @@ export function Fish({ id }: FishProps) {
   useFrame(({ clock }, delta) => {
     if (phase === 'ended' || !bucketPosition || !body.current) return
 
+    const now = clock.elapsedTime
+    const currentPosition = body.current.translation()
+
     // Emerge on start
     if (bodyType === 'kinematicPosition') {
-      const position = body.current.translation()
-      if (position.y >= 0) {
+      if (currentPosition.y >= 0) {
         setBodyType('dynamic')
+        // 产生涟漪
+        if (now - lastRippleTime.current > 0.5) {
+          setRipplePosition(new Vector3(currentPosition.x, 0.02, currentPosition.z))
+          setShowRipple(true)
+          lastRippleTime.current = now
+        }
         return
       }
 
-      position.y += delta
-      body.current.setTranslation(position, false)
+      currentPosition.y += delta
+      body.current.setTranslation(currentPosition, false)
       return
     }
 
@@ -97,7 +109,7 @@ export function Fish({ id }: FishProps) {
       const { x, y, z } = hookBody.translation()
       const position = new Vector3(x, y - targetRadius + targetOffsetY, z - targetOffsetZ)
       body.current.setTranslation(position, false)
-      body.current.setRotation(new Quaternion(), false) // this ensures accurate positioning of hook
+      body.current.setRotation(new Quaternion(), false)
 
       if (position.distanceTo(bucketPosition) < 0.8) unhook(id)
       return
@@ -105,9 +117,17 @@ export function Fish({ id }: FishProps) {
 
     if (paused) return
 
+    // 检测鱼是否接触水面，产生涟漪
+    if (currentPosition.y > -0.1 && currentPosition.y < 0.1) {
+      if (now - lastRippleTime.current > 1.0) { // 每 1 秒最多产生一次涟漪
+        setRipplePosition(new Vector3(currentPosition.x, 0.02, currentPosition.z))
+        setShowRipple(true)
+        lastRippleTime.current = now
+      }
+    }
+
     // Move
     const impulse = new Vector3()
-    const now = clock.elapsedTime
 
     if (now - lastFloat.current >= floatFrequency) {
       impulse.y = 0.1
@@ -125,6 +145,12 @@ export function Fish({ id }: FishProps) {
 
   return (
     <>
+      {showRipple && (
+        <Ripple
+          position={ripplePosition}
+          onFadeOut={() => setShowRipple(false)}
+        />
+      )}
       <RigidBody
         type={bodyType}
         ref={body}
