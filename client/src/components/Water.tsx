@@ -58,9 +58,6 @@ export default function Water() {
         count={200}
         color="white"
         opacity={0.6}
-        sizeMultiplier={0.02}
-        minSpeed={0.1}
-        maxSpeed={0.5}
       />
 
       <mesh scale={radius} position={-0.1} rotation-x={Math.PI * 0.5}>

@@ -77,7 +77,7 @@ export default function AuthModal({ onClose, onAuthSuccess }: AuthModalProps) {
           </div>
         )}
 
-        {transitions((style, item) => (
+        {transitions((style) => (
           <animated.form
             style={style}
             onSubmit={handleSubmit}

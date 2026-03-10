@@ -8,7 +8,6 @@ import api from '../../api/client'
 import { randomInt, randomOneOf } from '../../utils/random'
 import { LOST_MESSAGES, WIN_MESSAGES } from '../data/messages'
 import AuthModal from './AuthModal'
-import GameLeaderboard from './GameLeaderboard'
 
 const getButtonSpringConfig = () =>
   ({
@@ -52,7 +51,6 @@ export default function Menu() {
 
 const MainMenu = animated(props => {
   const start = useGame(state => state.start)
-  const setMenu = useGame(state => state.setMenu)
   const auth = useAuth()
   const [showAuth, setShowAuth] = useState(false)
 

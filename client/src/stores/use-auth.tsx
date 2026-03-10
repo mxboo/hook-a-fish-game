@@ -16,7 +16,7 @@ interface AuthStore {
   refreshUser: () => Promise<void>
 }
 
-const useAuth = create<AuthStore>()((set, get) => ({
+const useAuth = create<AuthStore>()((set) => ({
   user: null,
   isAuthenticated: false,
   isLoading: true,

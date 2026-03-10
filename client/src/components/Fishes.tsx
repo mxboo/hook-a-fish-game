@@ -7,7 +7,7 @@ import {
   type CollisionEnterPayload,
   type RigidBodyTypeString,
 } from '@react-three/rapier'
-import { useMemo, useRef, useState, useCallback } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { Euler, Quaternion, Vector3 } from 'three'
 import useGame from '../stores/use-game'
 import { random, randomAngle, randomColor } from '../utils/random'
