@@ -14,7 +14,7 @@ router.get('/', async (req: Request, res: Response) => {
       success: true,
       data: {
         leaderboard,
-        total: leaderboard.length,
+        total: Array.isArray(leaderboard) ? leaderboard.length : 0,
       },
     })
   } catch (error: any) {
