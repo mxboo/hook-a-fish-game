@@ -8,6 +8,7 @@ import Canvas from './helpers/Canvas'
 import Helpers from './helpers/Helpers'
 import SoundBooard from './helpers/SoundBoard'
 import World from './World'
+import GameLeaderboard from './interface/GameLeaderboard'
 import GameTutorial from './interface/GameTutorial'
 import useGame from '../stores/use-game'
 
@@ -23,6 +24,7 @@ export default function Experience() {
       {(isPlaying || isEnded) && (
         <>
           <GameTutorial />
+          <GameLeaderboard />
         </>
       )}
       
