@@ -4,23 +4,9 @@ Command: npx gltfjsx@6.5.3 public/models/fish2.glb --output src/components/model
 */
 
 import { useGLTF } from '@react-three/drei'
-import { useEffect, useState } from 'react'
-import type { Material } from 'three'
 
 export default function Fish2(props: any) {
   const { nodes, materials } = useGLTF('/models/fish2.glb') as any
-  const [material, setMaterial] = useState<Material>()
-
-  useEffect(() => {
-    if (!materials?.['tripo_mat_a763bd53-000e-494e-8d1b-57e6db21b8b4']) return
-    
-    const baseMaterial = materials['tripo_mat_a763bd53-000e-494e-8d1b-57e6db21b8b4'].clone()
-    baseMaterial.map = null
-    baseMaterial.metalness = 0.5
-    baseMaterial.roughness = 0.8
-    
-    setMaterial(baseMaterial)
-  }, [materials])
 
   if (!nodes || !materials) {
     return null
@@ -28,10 +14,10 @@ export default function Fish2(props: any) {
 
   return (
     <group {...props} dispose={null}>
-      {/* 缩小 0.5 倍，旋转使嘴部向上 */}
+      {/* 缩小 0.5 倍，旋转使嘴部向上，使用默认材质 */}
       <mesh 
         geometry={nodes['tripo_node_a763bd53-000e-494e-8d1b-57e6db21b8b4'].geometry} 
-        material={material}
+        material={materials['tripo_mat_a763bd53-000e-494e-8d1b-57e6db21b8b4']}
         castShadow
         rotation={[Math.PI / 2, 0, Math.PI / 2]}
         scale={0.5}
