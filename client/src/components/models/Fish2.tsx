@@ -4,24 +4,46 @@ Command: npx gltfjsx@6.5.3 public/models/fish2.glb --output src/components/model
 */
 
 import { useGLTF } from '@react-three/drei'
-import { useEffect, useState } from 'react'
-import type { Material } from 'three'
+import React, { useEffect, useState } from 'react'
+import type { ColorRepresentation, Material, MeshStandardMaterial } from 'three'
+import type { GLTF } from 'three-stdlib'
 
-export default function Fish2(props: any) {
-  const { nodes, materials } = useGLTF('/models/fish2.glb') as any
+type GLTFResult = GLTF & {
+  nodes: {
+    ['tripo_node_a763bd53-000e-494e-8d1b-57e6db21b8b4']: THREE.Mesh
+  }
+  materials: {
+    ['tripo_mat_a763bd53-000e-494e-8d1b-57e6db21b8b4']: THREE.MeshStandardMaterial
+  }
+  animations: never[]
+}
 
+type Fish2Props = JSX.IntrinsicElements['group'] & {
+  colorA?: ColorRepresentation
+  colorB?: ColorRepresentation
+  colorC?: ColorRepresentation
+}
+
+export default function Fish2({
+  colorA = '#ff6b6b',
+  colorB = '#ffd93d',
+  colorC = '#6bcb77',
+  ...props
+}: Fish2Props) {
+  const { nodes, materials } = useGLTF('/models/fish2.glb') as GLTFResult
   const [material, setMaterial] = useState<Material>()
 
   useEffect(() => {
-    if (!materials?.['tripo_mat_a763bd53-000e-494e-8d1b-57e6db21b8b4']) return
+    if (!materials['tripo_mat_a763bd53-000e-494e-8d1b-57e6db21b8b4']) return
     
     const baseMaterial = materials['tripo_mat_a763bd53-000e-494e-8d1b-57e6db21b8b4'].clone()
     baseMaterial.map = null
     baseMaterial.metalness = 0.5
     baseMaterial.roughness = 0.8
+    baseMaterial.color.set(colorA)
     
     setMaterial(baseMaterial)
-  }, [materials])
+  }, [materials, colorA, colorB, colorC])
 
   if (!nodes || !materials) {
     return null
@@ -29,11 +51,12 @@ export default function Fish2(props: any) {
 
   return (
     <group {...props} dispose={null}>
+      {/* 缩小 0.5 倍，旋转使嘴部向上 */}
       <mesh 
         geometry={nodes['tripo_node_a763bd53-000e-494e-8d1b-57e6db21b8b4'].geometry} 
         material={material}
         castShadow
-        rotation={[-Math.PI / 2, 0, 0]}
+        rotation={[Math.PI / 2, 0, Math.PI / 2]}
         scale={0.5}
       />
     </group>
