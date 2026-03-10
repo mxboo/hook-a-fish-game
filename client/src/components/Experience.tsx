@@ -1,5 +1,6 @@
 import { CameraControls } from '@react-three/drei'
 import { Physics } from '@react-three/rapier'
+import { EffectComposer, Outline } from '@react-three/postprocessing'
 import { useDebug } from '../hooks/use-debug'
 import { useIsTouch } from '../hooks/use-is-touch'
 import Environment from './Environment'
@@ -49,6 +50,18 @@ export default function Experience() {
 
         <SoundBooard />
         <CameraRig />
+
+        {/* 后处理描边效果 */}
+        <EffectComposer disableNormalPass>
+          <Outline
+            threshold={0.5}
+            strength={0.3}
+            color="#000000"
+            blur={0.5}
+            opacity={0.8}
+            renderToScreen
+          />
+        </EffectComposer>
       </Canvas>
     </>
   )
