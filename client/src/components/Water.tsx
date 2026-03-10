@@ -38,13 +38,13 @@ export default function Water() {
         <circleGeometry />
         <MeshDistortMaterial transmission={0.8} roughness={0.3} thickness={0.02} ior={2}>
           <GradientTexture
-            stops={[0, 1]}
-            colors={['dodgerblue', 'aquamarine']}
+            stops={[0, 0.7, 1]}
+            colors={['dodgerblue', 'aquamarine', 'transparent']}
             size={512}
             width={512}
             type={GradientType.Radial}
-            innerCircleRadius={200}
-            outerCircleRadius={250}
+            innerCircleRadius={150}
+            outerCircleRadius={280}
           />
         </MeshDistortMaterial>
       </mesh>
