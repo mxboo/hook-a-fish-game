@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 export default function GameTutorial() {
   return createPortal(
     <div className="fixed left-4 top-4 z-40">
-      <div className="bg-black/40 backdrop-blur-sm rounded-xl p-4 min-w-[260px] border border-white/5 shadow-2xl">
+      <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 min-w-[260px] border-2 border-white/30 shadow-2xl">
         <div className="text-xl font-bold text-white mb-3 text-center">🎮 游戏玩法</div>
         
         <div className="space-y-3 text-sm text-gray-300">

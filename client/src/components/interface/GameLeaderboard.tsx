@@ -38,7 +38,7 @@ export default function GameLeaderboard() {
 
   return createPortal(
     <div className="fixed right-4 top-4 z-40">
-      <div className="bg-black/40 backdrop-blur-sm rounded-xl p-4 min-w-[260px] border border-white/5 shadow-2xl">
+      <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 min-w-[260px] border-2 border-white/30 shadow-2xl">
         <div className="text-xl font-bold text-white mb-3 text-center">🏆 排行榜</div>
         
         {loading ? (
